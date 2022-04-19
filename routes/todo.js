@@ -1,10 +1,10 @@
 const { Router } = require("express");
 const router = Router();
 
-const getAllTodos = require("./methods/getAllTodos");
-const addTodo = require("./methods/addTodo");
-const updateTodo = require("./methods/udateTodo");
-const removeTodo = require("./methods/removeTodo");
+const getAllTodos = require("../methods/todos/getAllTodos");
+const addTodo = require("../methods/todos/addTodo");
+const updateTodo = require("../methods/todos/udateTodo");
+const removeTodo = require("../methods/todos/removeTodo");
 
 //get task list
 router.get("/", getAllTodos);
