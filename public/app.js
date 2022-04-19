@@ -40,8 +40,31 @@ new Vue({
         })
         .catch((e) => console.log(e));
     },
+
+    complitedTodo(id) {
+      console.log("id === ", id);
+      fetch("api/todo/" + id, {
+        method: "put",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ done: true }),
+      })
+        .then((res) => res.json())
+        .then(({ todo }) => {
+          this.todos.map((t) =>
+            t.id === todo.id ? (t.updatedAt = todo.updatedAt) : t
+          );
+        })
+        .catch((e) => console.log(e));
+    },
+
     removeTodo(id) {
-      this.todos = this.todos.filter((t) => t.id !== id);
+      fetch(`/api/todo/${id}`, {
+        method: "delete",
+      })
+        .then(() => {
+          this.todos = this.todos.filter((t) => t.id !== id);
+        })
+        .catch((e) => console.log(e));
     },
   },
   filters: {

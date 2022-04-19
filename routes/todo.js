@@ -6,9 +6,6 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     const todos = await Todo.findAll();
-
-    console.log("todos ===>", todos);
-
     res.status(200).json(todos);
   } catch (e) {
     res.status(500).json({ message: "Server error" });
@@ -31,7 +28,14 @@ router.post("/", async (req, res) => {
 
 //change task
 router.put("/:id", async (req, res) => {
+  const id = Number(req.params.id);
+
   try {
+    const todo = await Todo.findByPk(id);
+    todo.done = req.body.done;
+
+    await todo.save();
+    res.status(200).json({ todo });
   } catch (e) {
     res.status(500).json({ message: "Server error" });
   }
@@ -40,6 +44,16 @@ router.put("/:id", async (req, res) => {
 //delete task
 router.delete("/:id", async (req, res) => {
   try {
+    const id = Number(req.params.id);
+    const todos = await Todo.findAll({
+      where: {
+        id: id,
+      },
+    });
+
+    await todos[0].destroy();
+
+    res.status(204).json({});
   } catch (e) {
     res.status(500).json({ message: "Server error" });
   }
