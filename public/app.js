@@ -36,36 +36,58 @@ new Vue({
   methods: {
     addTodo() {
       const title = this.todoTitle.trim();
+
       if (!title) {
         return;
       }
 
-      fetch("/api/todo", {
+      const query = `
+        mutation {
+          createTodo(todo:{title:"${title}"}){
+            id title done createdAt updatedAt
+          }
+        }
+      `;
+
+      fetch("/graphql", {
         method: "post",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ title }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ query }),
       })
         .then((res) => res.json())
-        .then(({ todo }) => {
-          console.log(todo);
-
-          this.todos.push(todo);
+        .then((response) => {
+          this.todos.push(response.data.createTodo);
           this.todoTitle = "";
         })
         .catch((e) => console.log(e));
     },
 
     complitedTodo(id) {
-      console.log("id === ", id);
-      fetch("api/todo/" + id, {
-        method: "put",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ done: true }),
+      const query = `
+        mutation {
+          compliteTodo(id: "${id}"){
+            updatedAt
+          }
+        }
+      `;
+
+      fetch("/graphql", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ query }),
       })
         .then((res) => res.json())
-        .then(({ todo }) => {
+        .then((response) => {
           this.todos.map((t) =>
-            t.id === todo.id ? (t.updatedAt = todo.updatedAt) : t
+            t.id === id
+              ? (t.updatedAt = response.data.compliteTodo.updatedAt)
+              : t
           );
         })
         .catch((e) => console.log(e));
