@@ -20,6 +20,7 @@ module.exports = buildSchema(`
   type Mutation {
     createTodo(todo : TodoInput!): Todo!
     compliteTodo(id: ID!): Todo!
+    deleteTodo(id: ID!): Boolean!
   }
  
 `);

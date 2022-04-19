@@ -21,8 +21,6 @@ module.exports = {
   },
 
   async compliteTodo({ id }) {
-    console.log("id ===", id);
-
     try {
       const todo = await Todo.findByPk(Number(id));
       todo.done = true;
@@ -30,6 +28,20 @@ module.exports = {
       await todo.save();
 
       return todo;
+    } catch (e) {
+      throw new Error("id is required !");
+    }
+  },
+
+  async deleteTodo({ id }) {
+    try {
+      const todos = await Todo.findAll({
+        where: { id },
+      });
+
+      await todos[0].destroy();
+
+      return true;
     } catch (e) {
       throw new Error("id is required !");
     }
