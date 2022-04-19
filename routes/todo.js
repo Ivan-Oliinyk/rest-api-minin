@@ -1,62 +1,21 @@
 const { Router } = require("express");
-const Todo = require("../models/todo");
 const router = Router();
 
+const getAllTodos = require("./methods/getAllTodos");
+const addTodo = require("./methods/addTodo");
+const updateTodo = require("./methods/udateTodo");
+const removeTodo = require("./methods/removeTodo");
+
 //get task list
-router.get("/", async (req, res) => {
-  try {
-    const todos = await Todo.findAll();
-    res.status(200).json(todos);
-  } catch (e) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.get("/", getAllTodos);
 
 //create new task
-router.post("/", async (req, res) => {
-  try {
-    const todo = await Todo.create({
-      title: req.body.title,
-      done: false,
-    });
-    res.status(201).json({ todo });
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.post("/", addTodo);
 
 //change task
-router.put("/:id", async (req, res) => {
-  const id = Number(req.params.id);
-
-  try {
-    const todo = await Todo.findByPk(id);
-    todo.done = req.body.done;
-
-    await todo.save();
-    res.status(200).json({ todo });
-  } catch (e) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.put("/:id", updateTodo);
 
 //delete task
-router.delete("/:id", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const todos = await Todo.findAll({
-      where: {
-        id: id,
-      },
-    });
-
-    await todos[0].destroy();
-
-    res.status(204).json({});
-  } catch (e) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.delete("/:id", removeTodo);
 
 module.exports = router;
