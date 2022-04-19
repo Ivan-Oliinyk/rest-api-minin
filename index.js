@@ -1,16 +1,28 @@
 const express = require("express");
 const path = require("path");
+const { graphqlHTTP } = require("express-graphql");
+
 const sequelize = require("./utils/dataBase");
-const todoRoutes = require("./routes/todo");
+const resolver = require("./graphql/resolver");
+const schema = require("./graphql/schema");
+
 const serverRun = require("./helper/serverRun");
-const app = express();
 const config = require("./config");
+
+const app = express();
+
 const { PORT } = config;
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
-app.use("/api/todo", todoRoutes);
+app.use(
+  graphqlHTTP({
+    schema: schema,
+    rootValue: resolver,
+    graphiql: true,
+  })
+);
 
 app.use((req, res, next) => {
   res.sendFile("./index.js");
